@@ -28,9 +28,15 @@ class Prompt:
     
     def get_filename(self):
         cwd = os.getcwd()
+        file1 = f"{cwd}/49_cities.txt"
+        file2 = f"{cwd}/cities_full.txt"
+        if not os.path.exists(file1):
+            raise FileNotFoundError("49_cities.txt is missing in current folder.")
+        if not os.path.exists(file2):
+            raise FileNotFoundError("cities_full.txt is missing in current folder.")
         options = {
-            '1':f"{cwd}/49_cities.txt",
-            '2':f"{cwd}/cities_full.txt"
+            '1':file1,
+            '2':file2
         }
         while True:
             try:

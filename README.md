@@ -2,7 +2,7 @@
 
 Dennis Ping  
 Homework 3  
-12 June 2021  
+June 12, 2021  
 
 ## Purpose
 
@@ -36,13 +36,14 @@ Without numba, the simple `49_cities.txt` file takes about 4.5 minutes to calcul
 With numba, the simple `49_cities.txt` file takes about 10 seconds to calculate 10,000 iterations.  
 I did not want to wait 12 days for the `cities_full.txt` file to finish computing.
 
-| Algorithm | Input File | Without Numba | With Numba | Improvment |
+| Algorithm | Input File | Without Numba | With Numba | Improvement |
 | ----------| ------------- | ----------- | ----------- | ---------|
 | Gradient Descent | 49_cities.txt | 4.5 min | 10 sec | 27x     |
 | Gradient Descent | cities_full.txt | 294 hr | 44 hr   | 6.6x     |
 | Hill Climbing | 49_cities.txt | ... | 1.2 sec | ... |
 | Hill Climbing | cities_full.txt | ... | 20 sec | ... |
-*Note: Computation done on a AMD Ryzen 5600x. Performance may vary.*
+
+*Note: Computation done on an AMD Ryzen 5600x. Performance may vary.*
 
 ## How to Run
 

@@ -4,8 +4,9 @@ from time import time
 import numpy as np
 from geopy.distance import distance
 from matplotlib import pyplot as plt
-from prompt import Prompt
+from io_manager import IOManager
 import itertools
+from random import randint
 
 class Parser:
     """
@@ -30,14 +31,11 @@ class Parser:
 def random_solution(citiesIdx):
     """
     Generate a random solution from a list of city indexes.
-    The home city is automatically added to the end of the list.
     :param citiesIdx: A list of city indexes.
     :return: A list of city indexes in random order for the Traveling Salesman to traverse.
     """
-    temp = citiesIdx.copy()
-    np.random.shuffle(temp)
-    home = citiesIdx[0]
-    solution = np.append(temp, home) # Append home city
+    solution = citiesIdx.copy() # Avoid nasty bug with object reference when you shuffle
+    np.random.shuffle(solution)
     return solution
 
 def build_cities_index(cities):
@@ -47,7 +45,7 @@ def build_cities_index(cities):
     :return: A list of cities labeled as integers.
     """
     citiesIdx = np.arange(0, len(cities))
-    return citiesIdx # Remember that cities idx does not include return home!
+    return citiesIdx
 
 def build_distance_map_redux(cities, citiesIdx):
     """
@@ -57,27 +55,24 @@ def build_distance_map_redux(cities, citiesIdx):
     :param citiesIdx: A list of cities labeled as integers.
     :return: A dictionary of all pairwise distances between cities.
     """
-    home = cities[0]
-    cities.append(home) # Append the home so that you can return home.
-    citiesIdx = np.append(citiesIdx, 0) # Append home.
-    tempMap = {}
-    for i, each in enumerate(citiesIdx):
-        tempMap[each] = cities[i]
+    citiesMap = {}
+    for i, idxNum in enumerate(citiesIdx):
+        citiesMap[idxNum] = cities[i]
 
     distanceMap = typed.Dict.empty(key_type=types.UniTuple(types.int64, 2), value_type=types.int64)
-    allPermutations = itertools.permutations(citiesIdx, 2)
     # Note: permutations take up 2x more memory, but the eventual lookup is 2x faster.
     # This is because you don't need to stop, switch the tuple, and then lookup again.
+    allPermutations = itertools.permutations(citiesIdx, 2)
     for i, each in enumerate(allPermutations):
         cityA = each[0] # These are the numeric values of cities
         cityB = each[1]
 
-        coordA = (tempMap[cityA][2], tempMap[cityA][1]) # Get the city tuple from temp map
-        coordB = (tempMap[cityB][2], tempMap[cityB][1])
+        coordA = (citiesMap[cityA][2], citiesMap[cityA][1]) # Get the city tuple from temp map
+        coordB = (citiesMap[cityB][2], citiesMap[cityB][1])
         dist = distance(coordA, coordB).km
         distanceMap[each] = int(dist)
     print("SUCCESSFUL DISTANCE MAP BUILD")
-    return distanceMap
+    return distanceMap, citiesMap
 
 @njit
 def total_distance(solution, distanceMap):
@@ -94,6 +89,11 @@ def total_distance(solution, distanceMap):
         cityB = solution[i+1]
         buildKey = (cityA, cityB)
         totalDistance += distanceMap[buildKey]
+    # Build the key to return home
+    cityA = solution[-1]
+    cityB = solution[0]
+    goHome = (cityA, cityB)
+    totalDistance += distanceMap[goHome]
     return totalDistance
 
 @njit
@@ -107,14 +107,27 @@ def find_best_neighbor(solution, distanceMap):
     """
     bestDist = sys.maxsize
     bestNeighbor = None
-    for i in range(len(solution)):
-        for j in range(i + 1, len(solution)):
-            neighbor = solution.copy()
-            neighbor[i], neighbor[j] = solution[j], solution[i]
-            dist = total_distance(neighbor, distanceMap)
-            if dist < bestDist:
-                bestDist = dist
-                bestNeighbor = neighbor
+    # for i in range(len(solution)):
+    #     for j in range(i + 1, len(solution)):
+    #         neighbor = solution.copy()
+    #         neighbor[i], neighbor[j] = solution[j], solution[i]
+    #         dist = total_distance(neighbor, distanceMap)
+    #         if dist < bestDist:
+    #             bestDist = dist
+    #             bestNeighbor = neighbor
+    count = 0
+    while count < 500:
+        j = randint(0, len(solution)-1)
+        k = randint(1, len(solution)-1)
+        if j == k:
+            k = randint(1, len(solution)-1)
+        neighbor = solution.copy()
+        neighbor[j], neighbor[k] = solution[k], solution[j]
+        dist = total_distance(neighbor, distanceMap)
+        if dist < bestDist:
+            bestDist = dist
+            bestNeighbor = neighbor
+        count += 1
     return bestNeighbor, bestDist
 
 def main():
@@ -122,20 +135,23 @@ def main():
     Initialize user prompt, parse the input file, and run the search algorithm.
     Plot the results.
     """
-    prompt = Prompt()
-    filename, iterations, rounds = prompt.prompt_input()
+    ioManager = IOManager()
+    filename, iterations, rounds = ioManager.prompt_input()
 
     parser = Parser()
     cities = parser.read_file(filename)
     
-    print("\nStarting simple hill climbing search")
+    print("\nStarting gradient descent search")
     startTime = time()
     citiesIdx = build_cities_index(cities)
-    distanceMap = build_distance_map_redux(cities, citiesIdx)
+
+    distanceMap, citiesMap = build_distance_map_redux(cities, citiesIdx)
 
     plt.style.use("ggplot")
     fig, ax = plt.subplots(figsize=(8,6))
 
+    absBestDistance = sys.maxsize
+    absBestSolution = None
     for r in range(rounds):
         t1 = time()
         distList = []
@@ -150,11 +166,19 @@ def main():
                 bestSolution = bestNeighbor
             distList.append(bestDist)
             iterList.append(i + (r * iterations))
+
+        # Track the absolute best solution and distance
+        if bestDist < absBestDistance:
+            absBestDistance = bestDist
+            absBestSolution = bestSolution
+
         ax.plot(iterList, distList)
         t2 = time()
         duration = round(t2-t1, 3)
         print(f"Best distance in round {r}: {bestDist} km\t Time taken: {duration} sec")
     print(f"Total run time: {round(time() - startTime, 3)} sec")
+
+    ioManager.write_file("gradient_descent", filename, absBestDistance, absBestSolution, citiesMap)
     
     plt.suptitle("Gradient Descent Search Algorithm", fontsize=24)
     ax.set_title(f"Rounds: {rounds}     Iterations: {iterations}", fontsize=12)

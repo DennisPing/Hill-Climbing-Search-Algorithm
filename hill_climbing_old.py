@@ -7,6 +7,8 @@ from time import time
 from matplotlib import pyplot as plt
 import numpy as np
 
+# OLD VERSION. STORED FOR ARCHIVAL PURPOSES.
+
 class Parser:
     def __init__(self):
         pass
@@ -64,7 +66,7 @@ class HillClimbing:
                 totalDistance += self.distanceMap[buildKey]
         return int(totalDistance)
 
-    def generate_and_find_best_neighbors(self, solution): # this takes the 2nd longest time.
+    def find_best_neighbor_gradient(self, solution): # this takes the 2nd longest time.
         """
         Generate all possible neighbors from a solution of cities.
         :param solution: A random list of city tuples.
@@ -82,20 +84,21 @@ class HillClimbing:
                     bestNeighbor = neighbor
         return bestNeighbor, bestDist
 
-    def find_best_neighbor(self, allNeighbors): # this takes the longest time. Order it beforehand.
+    def find_best_neighbor_hill(self, solution): # this takes the 2nd longest time.
         """
-        Find the best neighbor solution out of all possible neighbors.
-        :param allNeighbors: All possible neighbors as a list.
-        :return: The best neighbor which has the shortest total distance.
+        Generate all possible neighbors from a solution of cities.
+        :param solution: A random list of city tuples.
+        :return: All possible neighbors as a list.
         """
-        bestNeighbor = allNeighbors[0]
-        shortestDist = self.total_distance(bestNeighbor) # Pick the first neighbor to start.
-        for each in allNeighbors:
-            eachDist = self.total_distance(each)
-            if eachDist < shortestDist:
-                shortestDist = eachDist
-                bestNeighbor = each
-        return bestNeighbor, shortestDist
+        currentDist = self.total_distance(solution)
+        for i in range(len(solution)):
+            for j in range(i + 1, len(solution)):
+                neighbor = solution.copy()
+                neighbor[i], neighbor[j] = solution[j], solution[i]
+                dist = self.total_distance(neighbor)
+                if dist < currentDist:
+                    return neighbor, dist
+        return solution, currentDist
 
     def build_distance_map(self, solution):
         """
@@ -120,10 +123,11 @@ class HillClimbing:
 
 def main():
     cwd = os.getcwd()
-    fileBuilder = f"{cwd}/49_cities.txt"
+    fileBuilder = f"{cwd}/cities_full.txt"
     parser = Parser()
     cities = parser.read_file(fileBuilder)
     
+    startTime = time()
     hillclimb = HillClimbing(cities)
     solution = hillclimb.random_solution()
     print("Finished initial setup.")
@@ -143,17 +147,16 @@ def main():
 
     for r in range(rounds):
 
-        t1 = time()
         distList = []
         iterList = []
         bestDist = sys.maxsize
+        t1 = time()
         for i in range(iterations):
-            tx = time()
 
             solution = hillclimb.random_solution()
             #print("Made a random solution.")
 
-            bestNeighbor, shortestDist = hillclimb.generate_and_find_best_neighbors(solution)
+            bestNeighbor, shortestDist = hillclimb.find_best_neighbor_hill(solution)
             #print("Found the best neighbor.")
 
             if shortestDist < bestDist:
@@ -166,13 +169,13 @@ def main():
         t2 = time()
         duration = round(t2-t1, 2)
         print(f"Best distance: {bestDist} km\t Time taken: {duration} seconds")
-
+    print(f"Total run time: {round(time() - startTime, 3)} sec")
     plt.title("Hill Climbing Search Algorithm", fontsize=24)
     plt.xlabel("Iterations", fontsize=14)
     plt.ylabel("Shortest Distance (km)", fontsize=14)
     plt.tick_params(axis="both", which="major", labelsize=14)
 
-    plt.xticks(np.arange(0, (rounds*iterations), 100))
+    plt.xticks(np.arange(0, (rounds*iterations), 1000))
 
     plt.show()
 

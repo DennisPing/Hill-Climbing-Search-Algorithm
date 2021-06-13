@@ -46,10 +46,10 @@ With numba for Gradient Descent search, the large `cities_full.txt` file took 13
 
 | Algorithm            | Input File      | Without Numba | With Numba | Improvement | Shortest Path |
 | ---------------------| --------------- | -----------  | ----------- | ----------- | ------------- |
-| Simple Hill Climbing | 49_cities.txt   | 0.83 sec     | 1.7 sec  | - 48 %         | 275,377       |
-| Simple Hill Climbing | cities_full.txt | 63 sec       | 77 sec   | - 82 %         | 5,675,861     |
-| Gradient Descent     | 49_cities.txt   | 4.5 min      | 11 sec   | + 2500 %       | 262,674       |
-| Gradient Descent     | cities_full.txt | 294 hr (est) | 13.2 hr  | + 2200 %       | 5,518,089     |
+| Simple Hill Climbing | 49_cities.txt   | 0.83 sec     | 1.7 sec     | - 48 %      | 275,377       |
+| Simple Hill Climbing | cities_full.txt | 63 sec       | 77 sec      | - 82 %      | 5,675,861     |
+| Gradient Descent     | 49_cities.txt   | 4.5 min      | 11 sec      | + 2500 %    | 238,487       |
+| Gradient Descent     | cities_full.txt | 294 hr (est) | 13.2 hr     | + 2200 %    | 5,518,089     |
 
 *Note: Computation done on an AMD Ryzen 5600x. Performance may vary.*
 

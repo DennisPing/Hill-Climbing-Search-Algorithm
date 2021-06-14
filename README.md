@@ -53,14 +53,14 @@ With numba for Gradient Descent search, the large `cities_full.txt` file took 13
 
 *Note: Computation done on an AMD Ryzen 5600x. Performance may vary.*
 
-## Is a complete brute force run worth it?
+## Is calculating every possible neighbor worth it?
 
 Heck no. Generating every possible neighbor from a random solution leads to testing a huge number of negligble solutions.
 
-Among the full list of 754 cities, there are 283,881 unique pairs of cities which also means swapping is done that many times. For only 1 iteration.  
-Thus, for 10k iterations, you are swapping 2,838,810,000 times.
+Among the full list of 754 cities, there are 283,881 unique pairs of cities which also the number of possible city swaps.
+Thus, for 10k iterations, you are city swapping 2,838,810,000 times.
 
-Rather, you can achieve similar results by randomizing the swap positions and limiting the number of swaps to 500 per iteration.  
+You can achieve similar results by randomizing the swap positions and limiting the number of swaps to 500 or 1000 per iteration.  
 In fact, you often stumble into a better solution by sheer luck.  
 
 ## Example Input

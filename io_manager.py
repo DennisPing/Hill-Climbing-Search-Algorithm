@@ -112,7 +112,7 @@ class IOManager:
         baseName = tail.split('.')[0] # split the period and get the base name
         outfile = open(f"{self.cwd}/{algo}_{baseName}_best_solution.txt", mode='w')
         outfile.write(f"Shortest path found: {absBestDistance} km\n")
-        for eachCity in absBestSolution[:-1]:
+        for eachCity in absBestSolution[:-1]: # Write each line and remove parenthesis
             cityTuple = citiesMap[int(eachCity)]
             outfile.writelines(','.join(map(str, cityTuple)))
             outfile.write('\n')

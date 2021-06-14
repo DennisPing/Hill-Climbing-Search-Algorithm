@@ -43,7 +43,7 @@ def build_distance_map(cities, citiesIdx):
         cityA = each[0] # These are the numeric values of cities
         cityB = each[1]
 
-        coordA = (citiesMap[cityA][2], citiesMap[cityA][1]) # Get the city tuple from temp map
+        coordA = (citiesMap[cityA][2], citiesMap[cityA][1]) # Get the city tuple from citiesMap
         coordB = (citiesMap[cityB][2], citiesMap[cityB][1])
         dist = distance(coordA, coordB).km
         distanceMap[each] = int(dist)
@@ -73,7 +73,7 @@ def total_distance(solution, distanceMap):
     totalDistance = 0
     for i, city in enumerate(solution[:-1]): # Stop at the second to last city.
         cityA = city
-        cityB = solution[i+1]
+        cityB = solution[i + 1]
         buildKey = (cityA, cityB)
         totalDistance += distanceMap[buildKey]
     # Build the key to return home

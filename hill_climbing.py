@@ -57,7 +57,7 @@ def main():
             solution = random_solution(citiesIdx)
             bestNeighbor, shortestDist = find_best_neighbor(solution, distanceMap)
             if shortestDist < bestDist:
-                bestDist = shortestDist
+                bestDist = int(shortestDist)
                 bestSolution = bestNeighbor
             distList.append(bestDist)
             iterList.append(i + (r * iterations))

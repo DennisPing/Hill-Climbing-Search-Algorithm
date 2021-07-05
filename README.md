@@ -63,6 +63,14 @@ Thus, for 10k iterations, you are city swapping 2,838,810,000 times.
 You can achieve similar results by randomizing the swap positions and limiting the number of swaps to 500 or 1000 per iteration.  
 In fact, you often stumble into a better solution by sheer luck.  
 
+## Optimizations
+
+1. Precalculate all pairwise distances between each city and store them in a HashMap.
+2. Convert all city names from string to int for efficient usage in Numba.
+3. Code the Haversine equation so that it can be compiled into Numba.
+4. Compile the total_distance equation.
+5. Compile the find_best_neighbor equation.
+
 ## Example Input
 Command Line Interface   
 ```

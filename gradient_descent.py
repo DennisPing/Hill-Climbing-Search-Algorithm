@@ -36,8 +36,7 @@ def find_best_neighbor(solution, distanceMap, limit=None):
 
     # Set a limit of swaps.
     else:
-        count = 0
-        while count < limit:
+        for _ in range(limit):
             # Make a pair of unique, random numbers
             pickTwo = np.random.choice((len(solution)-1), 2, replace=False)
             j = int(pickTwo[0])
@@ -48,7 +47,6 @@ def find_best_neighbor(solution, distanceMap, limit=None):
             if dist < bestDist:
                 bestDist = dist
                 bestNeighbor = neighbor
-            count += 1
         return bestNeighbor, bestDist
 
 def main():
@@ -79,9 +77,9 @@ def main():
         bestSolution = None
         for i in range(iterations):
             solution = random_solution(citiesIdx)
-            bestNeighbor, shortestDist = find_best_neighbor(solution, distanceMap, limit=1000)
+            bestNeighbor, shortestDist = find_best_neighbor(solution, distanceMap, limit=500)
             if shortestDist < bestDist:
-                bestDist = shortestDist
+                bestDist = int(shortestDist)
                 bestSolution = bestNeighbor
             distList.append(bestDist)
             iterList.append(i + (r * iterations))

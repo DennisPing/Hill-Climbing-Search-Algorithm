@@ -5,7 +5,6 @@ import sys
 from numba import njit, types, typed
 from time import time
 import numpy as np
-from geopy.distance import distance
 from matplotlib import pyplot as plt
 from io_manager import IOManager
 import itertools
@@ -35,7 +34,7 @@ def build_distance_map(cities, citiesIdx):
     for i, idxNum in enumerate(citiesIdx):
         citiesMap[idxNum] = cities[i]
 
-    distanceMap = typed.Dict.empty(key_type=types.UniTuple(types.int64, 2), value_type=types.int64)
+    distanceMap = typed.Dict.empty(key_type=types.UniTuple(types.int64, 2), value_type=types.float64)
     # Note: permutations take up 2x more memory, but the eventual lookup is 2x faster.
     # This is because you don't need to stop, switch the tuple, and then lookup again.
     allPermutations = itertools.permutations(citiesIdx, 2)
@@ -43,12 +42,26 @@ def build_distance_map(cities, citiesIdx):
         cityA = each[0] # These are the numeric values of cities
         cityB = each[1]
 
-        coordA = (citiesMap[cityA][2], citiesMap[cityA][1]) # Get the city tuple from citiesMap
-        coordB = (citiesMap[cityB][2], citiesMap[cityB][1])
-        dist = distance(coordA, coordB).km
-        distanceMap[each] = int(dist)
+        # Longitude then Latitude
+        distanceMap[each] = haversine(float(citiesMap[cityA][2]), float(citiesMap[cityA][1]), float(citiesMap[cityB][2]), float(citiesMap[cityB][1]))
     print("SUCCESSFUL DISTANCE MAP BUILD")
     return distanceMap, citiesMap
+
+@njit # https://towardsdatascience.com/better-parallelization-with-numba-3a41ca69452e
+def haversine(s_lat, s_lng, e_lat, e_lng):
+    # approximate radius of earth in km
+    R = 6373.0
+
+    s_lat = np.deg2rad(s_lat)                    
+    s_lng = np.deg2rad(s_lng)     
+    e_lat = np.deg2rad(e_lat)                       
+    e_lng = np.deg2rad(e_lng)
+
+    d = np.sin((e_lat - s_lat)/2)**2 + \
+        np.cos(s_lat)*np.cos(e_lat) * \
+        np.sin((e_lng - s_lng)/2)**2
+
+    return 2 * R * np.arcsin(np.sqrt(d))
 
 @njit
 def random_solution(citiesIdx):

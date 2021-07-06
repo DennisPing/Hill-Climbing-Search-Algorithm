@@ -39,8 +39,8 @@ def find_best_neighbor(solution, distanceMap, limit=None):
         for _ in range(limit):
             # Make a pair of unique, random numbers
             pickTwo = np.random.choice((len(solution)-1), 2, replace=False)
-            j = int(pickTwo[0])
-            k = int(pickTwo[1])
+            j = pickTwo[0]
+            k = pickTwo[1]
             neighbor = solution.copy()
             neighbor[j], neighbor[k] = solution[k], solution[j]
             dist = total_distance(neighbor, distanceMap)

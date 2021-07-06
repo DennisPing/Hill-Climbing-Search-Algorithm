@@ -1,0 +1,50 @@
+Shortest path found: 248544 km
+Mexico City,-99.14,19.43
+Tokyo,139.77,35.67
+Peking,116.4,39.93
+Tianjin,117.2,39.13
+Soul,126.99,37.56
+London,-0.1,51.52
+Toronto,-79.38,43.65
+Riyadh,46.77,24.65
+Tehran,51.43,35.67
+Alexandria,29.95,31.22
+Hyderabad,78.48,17.4
+Lagos,3.35,6.5
+Ibadan,3.93,7.38
+Bangalore,77.56,12.97
+Madras,80.27,13.09
+Moscow,37.62,55.75
+Chongqing,106.58,29.57
+Singapore,103.85,1.3
+Wuhan,114.27,30.58
+Kinshasa,15.32,-4.31
+Xian,108.9,34.27
+Bombay,72.82,18.96
+Rangoon,96.15,16.79
+Delhi,77.21,28.67
+Dhaka,90.39,23.7
+Saint Petersburg,30.32,59.93
+Lahore,74.35,31.56
+Ho Chi Minh City,106.69,10.78
+Shanghai,121.47,31.23
+Karachi,67.01,24.86
+Abidjan,-4.03,5.33
+Chengdu,104.07,30.67
+Bangkok,100.5,13.73
+Jakarta,106.83,-6.18
+Manila,120.97,14.62
+Ahmadabad,72.58,23.03
+Calcutta,88.36,22.57
+Bagdad,44.44,33.33
+Ankara,32.85,39.93
+New York,-73.94,40.67
+Bogota,-74.09,4.63
+Lima,-77.05,-12.07
+Buenos Aires,-58.37,-34.61
+Los Angeles,-118.41,34.11
+Rio de Janeiro,-43.2,-22.91
+Cairo,31.25,30.06
+Istanbul,29,41.1
+Santiago,-70.64,-33.46
+Sao Paulo,-46.63,-23.53
